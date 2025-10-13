@@ -6,23 +6,36 @@ public class PlayerController : MonoBehaviour
 {
     Animator animator;
 
-    public Transform leftHand;
-    public Transform leftHandTarget;
+    public Transform spine;
+
+    float startZ = -80;
+    float endZ = 35;
+
+    float totalPercent;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+
+        totalPercent = startZ - endZ;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            animator.SetTrigger("Aiming");
-        }
-    }
 
+
+    }
     private void LateUpdate()
     {
+        float z = Mathf.Clamp(ConvertAngle(spine.eulerAngles.z), startZ, endZ);
+
+        spine.rotation = Quaternion.Euler(spine.eulerAngles.x, spine.eulerAngles.y, z);
+    }
+
+    float ConvertAngle(float angle)
+    {
+        if (angle > 180) return angle - 360;
+
+        return angle;
     }
 }
