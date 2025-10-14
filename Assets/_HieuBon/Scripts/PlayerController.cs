@@ -17,16 +17,13 @@ public class PlayerController : MonoBehaviour
 
     bool isRight;
     bool isDrag;
+    bool isInit;
 
     Camera mainCamera;
 
     private void Awake()
     {
         mainCamera = Camera.main;
-
-        dir = spine.eulerAngles.normalized;
-
-        point.position = transform.position + dir * 10;
 
         isRight = transform.localScale.x == 1;
     }
@@ -39,9 +36,9 @@ public class PlayerController : MonoBehaviour
 
             Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
-            mousePos.z = 0;
-
             offset = point.position - mousePos;
+
+            offset.z = 0;
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -51,33 +48,42 @@ public class PlayerController : MonoBehaviour
 
         if (isDrag)
         {
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-
-            mousePos.z = 0;
-
-            isRight = mousePos.x + offset.x > transform.position.x;
-
-            float angle = isRight ? rightLimit : leftLimit;
+            isRight = point.position.x > spine.position.x;
 
             transform.localScale = new Vector3(isRight ? 1 : -1, 1, 1);
             transform.rotation = Quaternion.Euler(0, isRight ? 135 : 225, 0);
 
-            Quaternion rotation = Quaternion.Euler(0, 0, angle);
+            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
-            dir = (mousePos + offset - transform.position).normalized;
+            float angle = isRight ? rightLimit : leftLimit;
 
-            float x = mousePos.x;
+            float x = mousePos.x - spine.position.x + offset.x;
             float r = Mathf.Tan(angle * Mathf.Deg2Rad);
-            float y = x * r + transform.position.y;
+            float y = x * r + spine.position.y;
 
-            Debug.DrawRay(transform.position, new Vector3(x, y, 0).normalized * 10, Color.red);
+            Debug.DrawRay(spine.position, new Vector3(x, x * r, 0).normalized * 10, Color.red);
 
-            point.position = new Vector3(mousePos.x, Mathf.Clamp(mousePos.y, y, 99f), 0) + offset;
+            dir = new Vector3(mousePos.x + offset.x, Mathf.Clamp(mousePos.y + offset.y, y, 99f), 0) - spine.position;
+            dir.z = 0;
+
+            Debug.DrawRay(spine.position, dir.normalized * 10, Color.yellow);
+
+            point.position = spine.position + dir.normalized * radius;
         }
+
     }
 
     private void LateUpdate()
     {
-        spine.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0, isRight ? 65 : -65, 0);
+        if (!isInit)
+        {
+            isInit = true;
+
+            dir = isRight ? Vector3.right : -Vector3.right;
+
+            point.position = spine.position + dir.normalized * radius;
+        }
+
+        spine.rotation = Quaternion.LookRotation(dir.normalized) * Quaternion.Euler(0, isRight ? 65 : -65, 0);
     }
 }

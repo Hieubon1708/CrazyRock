@@ -510,8 +510,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 10
-  leftLimit: -115
-  rightLimit: -25
+  leftLimit: -125
+  rightLimit: -55
   point: {fileID: 1023386114}
   spine: {fileID: 1932803408}
 --- !u!114 &756462072
@@ -551,12 +551,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 0c16a636af7682746bb31466afc1b318,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0c16a636af7682746bb31466afc1b318,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.44
+      value: 17.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0c16a636af7682746bb31466afc1b318,
         type: 3}
