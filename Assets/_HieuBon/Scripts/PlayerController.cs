@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
 
     public Transform point;
     public Transform spine;
+    public Transform gun;
 
     Vector3 dir;
     Vector3 offset;
@@ -79,11 +80,12 @@ public class PlayerController : MonoBehaviour
         {
             isInit = true;
 
-            dir = isRight ? Vector3.right : -Vector3.right;
+            dir = new Vector3(isRight ? 1 : -1, 0.75f, 0);
 
             point.position = spine.position + dir.normalized * radius;
         }
 
-        spine.rotation = Quaternion.LookRotation(dir.normalized) * Quaternion.Euler(0, isRight ? 65 : -65, 0);
+        spine.rotation = Quaternion.LookRotation(dir.normalized) * Quaternion.Euler(0, isRight ? 65 : -65, isRight ? 24.25f : -24.25f);
+        gun.rotation = Quaternion.LookRotation(dir.normalized) * Quaternion.Euler(7f, 0, 0);
     }
 }
