@@ -1,71 +1,74 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
 public class TrajectoryPrediction : MonoBehaviour
 {
-    LineRenderer lineRenderer;
-
-    public int resolution = 20;
-
     public float timeStep = 0.1f;
 
-    public float launchForce = 15f;
+    bool isDrag;
 
-    Vector3 initialVelocity;
+    public Transform[] points;
 
-    Vector3 gravity;
+    float defaultVelocity = 5;
 
-    void Awake()
+    Vector3 startMouse;
+
+    void ActivePoints(bool isActive)
     {
-        gravity = Physics.gravity;
-
-        lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.positionCount = resolution;
-    }
-
-    void Update()
-    {
-        initialVelocity = transform.forward * launchForce;
-
-        DrawTrajectory();
-    }
-
-    private void DrawTrajectory()
-    {
-        Vector3[] points = new Vector3[resolution];
-
-        Vector3 currentPosition = transform.position;
-        Vector3 currentVelocity = initialVelocity;
-
-        for (int i = 0; i < resolution; i++)
+        foreach (var point in points)
         {
-            points[i] = currentPosition;
+            point.gameObject.SetActive(isActive);
+        }
+    }
 
-            currentVelocity += gravity * timeStep;
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            isDrag = true;
 
-            currentPosition += currentVelocity * timeStep;
+            ActivePoints(isDrag);
 
-            // **3. (Tùy chọn) Kiểm tra va chạm để dừng đường kẻ**
-            // Nếu bạn muốn đường kẻ dừng lại khi va chạm, bạn có thể dùng Raycast
-            /*
-            RaycastHit hit;
-            if (Physics.Raycast(currentPosition, currentVelocity.normalized, out hit, currentVelocity.magnitude * timeStep))
-            {
-                points[i] = hit.point;
-                // Cắt bớt các điểm còn lại
-                lineRenderer.positionCount = i + 1; 
-                break; 
-            }
-            */
-
-            if (i == resolution - 1)
-            {
-                lineRenderer.positionCount = resolution;
-            }
+            startMouse = PlayerController.instance.MousePosition();
         }
 
-        lineRenderer.SetPositions(points);
+        if (Input.GetMouseButtonUp(0))
+        {
+            isDrag = false;
+
+            ActivePoints(isDrag);
+        }
+
+        if (isDrag)
+        {
+            Vector3 startPosition = transform.position;
+
+            startPosition.z = 0;
+
+            float initialVelocity = defaultVelocity + Vector2.Distance(PlayerController.instance.MousePosition(), startMouse);
+
+            Vector3 initialVelocityVector = PlayerController.instance.gun.forward * initialVelocity;
+
+            points[0].position = startPosition;
+
+            Vector3 gravity = Physics.gravity;
+
+            for (int i = 1; i < points.Length; i++)
+            {
+                float time = i * timeStep;
+
+                // p(t) = p0 + v0*t + 0.5 * g * t^2
+                Vector3 point = startPosition
+                              + initialVelocityVector * time
+                              + 0.5f * gravity * time * time;
+
+                point.z = 0;
+
+                points[i].position = point;
+            }
+        }
     }
 }

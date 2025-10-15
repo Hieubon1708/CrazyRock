@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
+
     public float radius;
 
     public float leftLimit;
@@ -14,6 +16,8 @@ public class PlayerController : MonoBehaviour
     public Transform gun;
 
     Vector3 dir;
+    [HideInInspector]
+    public Vector3 mousePos;
     Vector3 offset;
 
     bool isRight;
@@ -24,9 +28,16 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
+
         mainCamera = Camera.main;
 
         isRight = transform.localScale.x == 1;
+    }
+
+    public Vector3 MousePosition()
+    {
+        return mainCamera.ScreenToWorldPoint(Input.mousePosition);
     }
 
     private void Update()
@@ -35,7 +46,7 @@ public class PlayerController : MonoBehaviour
         {
             isDrag = true;
 
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            mousePos = MousePosition();
 
             offset = point.position - mousePos;
 
@@ -54,7 +65,7 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(isRight ? 1 : -1, 1, 1);
             transform.rotation = Quaternion.Euler(0, isRight ? 135 : 225, 0);
 
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            mousePos = MousePosition();
 
             float angle = isRight ? rightLimit : leftLimit;
 
@@ -64,12 +75,12 @@ public class PlayerController : MonoBehaviour
 
             Debug.DrawRay(spine.position, new Vector3(x, x * r, 0).normalized * 10, Color.red);
 
-            dir = new Vector3(mousePos.x + offset.x, Mathf.Clamp(mousePos.y + offset.y, y, 99f), 0) - spine.position;
+            dir = (new Vector3(mousePos.x + offset.x, Mathf.Clamp(mousePos.y + offset.y, y, 99f), 0) - spine.position).normalized;
             dir.z = 0;
 
-            Debug.DrawRay(spine.position, dir.normalized * 10, Color.yellow);
+            Debug.DrawRay(spine.position, dir * 10, Color.yellow);
 
-            point.position = spine.position + dir.normalized * radius;
+            point.position = spine.position + dir * radius;
         }
 
     }
@@ -82,10 +93,10 @@ public class PlayerController : MonoBehaviour
 
             dir = new Vector3(isRight ? 1 : -1, 0.75f, 0);
 
-            point.position = spine.position + dir.normalized * radius;
+            point.position = spine.position + dir * radius;
         }
 
-        spine.rotation = Quaternion.LookRotation(dir.normalized) * Quaternion.Euler(0, isRight ? 65 : -65, isRight ? 24.25f : -24.25f);
-        gun.rotation = Quaternion.LookRotation(dir.normalized) * Quaternion.Euler(7f, 0, 0);
+        spine.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0, isRight ? 65 : -65, isRight ? 24.25f : -24.25f);
+        gun.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(7f, 0, 0);
     }
 }
