@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.EventSystems;
 
 public class TrajectoryPrediction : MonoBehaviour
 {
@@ -16,30 +17,29 @@ public class TrajectoryPrediction : MonoBehaviour
 
     Vector3 startMouse;
 
-    void ActivePoints(bool isActive)
+    LayerMask layerMask;
+
+    private void Awake()
     {
-        foreach (var point in points)
-        {
-            point.gameObject.SetActive(isActive);
-        }
+        layerMask = LayerMask.GetMask("Wall");
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             isDrag = true;
 
-            ActivePoints(isDrag);
+            ActivePoints(true);
 
             startMouse = PlayerController.instance.MousePosition();
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             isDrag = false;
 
-            ActivePoints(isDrag);
+            ActivePoints(false);
         }
 
         if (isDrag)
@@ -56,6 +56,8 @@ public class TrajectoryPrediction : MonoBehaviour
 
             Vector3 gravity = Physics.gravity;
 
+            int hideIndex = points.Length;
+
             for (int i = 1; i < points.Length; i++)
             {
                 float time = i * timeStep;
@@ -68,7 +70,22 @@ public class TrajectoryPrediction : MonoBehaviour
                 point.z = 0;
 
                 points[i].position = point;
+
+                RaycastHit hit;
+
+                if (Physics.Linecast(points[i - 1].position, points[i].position, out hit, layerMask)) hideIndex = i;
+
+                points[i].gameObject.SetActive(i < hideIndex);
+
             }
+        }
+    }
+
+    void ActivePoints(bool isActive)
+    {
+        foreach (var point in points)
+        {
+            point.gameObject.SetActive(isActive);
         }
     }
 }

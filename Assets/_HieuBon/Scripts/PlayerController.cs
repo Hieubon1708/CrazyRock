@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class PlayerController : MonoBehaviour
 
     Camera mainCamera;
 
+    public GameObject line;
+    public GameObject trajectoryPrediction;
+
     private void Awake()
     {
         instance = this;
@@ -33,6 +37,8 @@ public class PlayerController : MonoBehaviour
         mainCamera = Camera.main;
 
         isRight = transform.localScale.x == 1;
+
+        ActiveMode(true, false);
     }
 
     public Vector3 MousePosition()
@@ -42,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             isDrag = true;
 
@@ -53,7 +59,7 @@ public class PlayerController : MonoBehaviour
             offset.z = 0;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             isDrag = false;
         }
@@ -98,5 +104,21 @@ public class PlayerController : MonoBehaviour
 
         spine.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0, isRight ? 65 : -65, isRight ? 24.25f : -24.25f);
         gun.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(7f, 0, 0);
+    }
+
+    public void StraightBullet()
+    {
+        ActiveMode(true, false);
+    }
+
+    public void PhysicBullet()
+    {
+        ActiveMode(false, true);
+    }
+
+    void ActiveMode(bool isLineActive, bool isPhysicActive)
+    {
+        line.SetActive(isLineActive);
+        trajectoryPrediction.SetActive(isPhysicActive);
     }
 }
