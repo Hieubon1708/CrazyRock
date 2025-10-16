@@ -3,9 +3,12 @@
     Properties
     {
         _Color ("Color", Color) = (0,0,0,1)
+        _MainTex ("Texture", 2D) = "white" {}
     }
     SubShader
     {
+        Cull Off
+
         Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 100
 
@@ -45,11 +48,12 @@
             {
                 float alpha = _Color.w;
 
-                alpha = smoothstep(0, 1, 1 - distance(0.5, i.uv) - 0.5);
+                float dis = distance(0.5, i.uv);
+
+                if(dis > 0.25) alpha = smoothstep(0, 1, dis);
 
                 fixed4 finalColor = _Color;
 
-                finalColor.x *= 2;
                 finalColor.a = alpha;
 
                 return finalColor;
