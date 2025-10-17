@@ -2,21 +2,28 @@
 {
     Properties
     {
-        _Color ("Color", Color) = (0,0,0,1)
+        _Color ("Main Color", Color) = (1,1,1,1)
+        _CenterUVX ("CenterUVX", Range(0.0, 1.0)) = 0.5
+        _StartWidthHalf ("StartWidthHalf", Range(0.0, 0.5)) = 0.1
+        _FadeRange ("FadeRange", Range(0.01, 1.0)) = 0.4
     }
+
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        Tags
+        {
+            "RenderType"="Transparent" "Queue"="Transparent"
+        }
         LOD 100
+
+        ZWrite Off
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
-            Blend SrcAlpha OneMinusSrcAlpha
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-
             #include "UnityCG.cginc"
 
             struct appdata
@@ -31,9 +38,12 @@
                 float4 vertex : SV_POSITION;
             };
 
-            float4 _Color;
+            fixed4 _Color;
+            float _CenterUVX;
+            float _StartWidthHalf;
+            float _FadeRange;
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -41,18 +51,21 @@
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
-                float alpha = _Color.w;
+                fixed4 col = _Color;
 
-                alpha = smoothstep(0, 1, 1 - distance(0.5, i.uv.x) - 0.5);
+                float dist = abs(i.uv.x - _CenterUVX);
 
-                fixed4 finalColor = _Color;
+                float startDist = _StartWidthHalf;
 
-                finalColor.x *= 2;
-                finalColor.a = alpha;
+                float endDist = _StartWidthHalf + _FadeRange;
 
-                return finalColor;
+                float alphaFade = 1 - smoothstep(startDist, endDist, dist);
+
+                col.a = alphaFade;
+
+                return col;
             }
             ENDCG
         }

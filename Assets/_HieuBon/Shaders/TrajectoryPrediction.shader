@@ -2,24 +2,26 @@
 {
     Properties
     {
-        _Color ("Color", Color) = (0,0,0,1)
-        _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Color", Color) = (1,1,1,1)
+        _StartRadius ("StartRadius", Range(0.01, 1.0)) = 0.25 
+        _FadeRange ("FadeRange)", Range(0.01, 1.0)) = 0.5
+        _FadeCenterUV ("FadeCenterUV", Vector) = (0.5,0.5,0,0) 
     }
+
     SubShader
     {
-        Cull Off
-
         Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 100
+        
+        Cull Off
+        ZWrite Off
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
-            Blend SrcAlpha OneMinusSrcAlpha
-
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-
             #include "UnityCG.cginc"
 
             struct appdata
@@ -34,7 +36,10 @@
                 float4 vertex : SV_POSITION;
             };
 
-            float4 _Color;
+            fixed4 _Color;
+            float _StartRadius;
+            float _FadeRange;
+            float2 _FadeCenterUV; 
 
             v2f vert (appdata v)
             {
@@ -46,17 +51,18 @@
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float alpha = _Color.w;
+                fixed4 col = _Color; 
 
-                float dis = distance(0.5, i.uv);
+                float dist = distance(i.uv, _FadeCenterUV);
+                
+                float startDist = _StartRadius;
+                float endDist = _StartRadius + _FadeRange;
 
-                if(dis > 0.25) alpha = smoothstep(0, 1, dis);
+                float alphaFade = 1.0 - smoothstep(startDist, endDist, dist);
 
-                fixed4 finalColor = _Color;
+                col.a = alphaFade;
 
-                finalColor.a = alpha;
-
-                return finalColor;
+                return col;
             }
             ENDCG
         }

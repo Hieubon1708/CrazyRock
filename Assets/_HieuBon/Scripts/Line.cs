@@ -69,7 +69,7 @@ public class Line : MonoBehaviour
                 for (int x = 0; x < vertexCountX; x++)
                 {
                     float xPos = x * cellWidth - gridWidth / 2f;
-                    float zPos = z * cellDepth - gridDepth / 2f;
+                    float zPos = z * cellDepth;
 
                     if (z == 1)
                     {
@@ -78,13 +78,13 @@ public class Line : MonoBehaviour
                         Vector3 origin = transform.position + transform.right * xPos;
                         Vector3 direction = transform.forward;
 
-                        if (Physics.Raycast(origin, direction, out hit, 10, layerMask))
+                        if (Physics.Raycast(origin, direction, out hit, 100, layerMask))
                         {
                             Debug.DrawRay(origin, direction * hit.distance, Color.red);
 
                             zPos = hit.distance;
 
-                            if (x == 1) centerX = zPos;
+                            if (x == 0) centerX = zPos;
                         }
                         else zPos = centerX;
                     }
