@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public Transform point;
     public Transform spine;
     public Transform gun;
+    public Transform pool;
 
     Vector3 dir;
     [HideInInspector]
@@ -30,9 +31,13 @@ public class PlayerController : MonoBehaviour
     public GameObject line;
     public GameObject trajectoryPrediction;
 
+    Gun gunSc;
+
     private void Awake()
     {
         instance = this;
+
+        gunSc = GetComponentInChildren<Gun>();
 
         mainCamera = Camera.main;
 
@@ -62,6 +67,8 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             isDrag = false;
+
+            gunSc.Shot();
         }
 
         if (isDrag)
@@ -88,7 +95,6 @@ public class PlayerController : MonoBehaviour
 
             point.position = spine.position + dir * radius;
         }
-
     }
 
     private void LateUpdate()
@@ -109,11 +115,15 @@ public class PlayerController : MonoBehaviour
     public void StraightBullet()
     {
         ActiveMode(true, false);
+
+        gunSc.SetType(Gun.BulletType.Straight);
     }
 
     public void PhysicBullet()
     {
         ActiveMode(false, true);
+
+        gunSc.SetType(Gun.BulletType.Physic);
     }
 
     void ActiveMode(bool isLineActive, bool isPhysicActive)

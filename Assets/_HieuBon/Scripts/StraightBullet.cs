@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletReflection : MonoBehaviour
+public class StraightBullet : MonoBehaviour
 {
     public float speed = 20f;
 
@@ -10,6 +10,31 @@ public class BulletReflection : MonoBehaviour
 
     Vector3 direction;
     int bounceCount;
+
+    TrailRenderer trailRenderer;
+
+    LayerMask wallLayer;
+
+    private void Awake()
+    {
+        wallLayer = LayerMask.GetMask("Wall");
+
+        trailRenderer = GetComponentInChildren<TrailRenderer>();
+    }
+
+    public void Shot(Vector3 startPosition, Vector3 dir)
+    {
+        transform.position = startPosition;
+        transform.rotation = Quaternion.LookRotation(dir);
+
+        direction = transform.forward;
+
+        trailRenderer.Clear();
+
+        bounceCount = 0;
+
+        gameObject.SetActive(true);
+    }
 
     void Update()
     {
@@ -27,13 +52,13 @@ public class BulletReflection : MonoBehaviour
 
             transform.position = hit.point;
 
+            transform.rotation = Quaternion.LookRotation(direction);
+
             bounceCount++;
 
             if (bounceCount >= maxBounces)
             {
-                Destroy(gameObject);
-
-                return;
+                gameObject.SetActive(false);
             }
         }
         else

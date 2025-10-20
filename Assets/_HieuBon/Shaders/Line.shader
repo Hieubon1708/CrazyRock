@@ -63,7 +63,7 @@
 
                 float alphaFade = 1 - smoothstep(startDist, endDist, dist);
 
-                col.a = alphaFade;
+                col.a *= alphaFade;
 
                 return col;
             }

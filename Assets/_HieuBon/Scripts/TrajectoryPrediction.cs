@@ -13,11 +13,13 @@ public class TrajectoryPrediction : MonoBehaviour
 
     public Transform[] points;
 
-    float defaultVelocity = 5;
+    float defaultVelocity = 15;
 
     Vector3 startMouse;
 
     LayerMask layerMask;
+
+    public float initialVelocity;
 
     private void Awake()
     {
@@ -48,7 +50,7 @@ public class TrajectoryPrediction : MonoBehaviour
 
             startPosition.z = 0;
 
-            float initialVelocity = defaultVelocity + Vector2.Distance(PlayerController.instance.MousePosition(), startMouse);
+            initialVelocity = defaultVelocity + Vector2.Distance(PlayerController.instance.MousePosition(), startMouse) * 3;
 
             Vector3 initialVelocityVector = PlayerController.instance.gun.forward * initialVelocity;
 

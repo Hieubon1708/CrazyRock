@@ -47,7 +47,7 @@ public class Line : MonoBehaviour
         {
             isDrag = false;
 
-            meshRenderer.enabled = false;
+            //meshRenderer.enabled = false;
         }
 
         if (isDrag)
