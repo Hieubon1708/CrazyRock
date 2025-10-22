@@ -71,3 +71,31 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 .vsconfig
+Assets/MonoBehaviour/Default.asset
+Assets/MonoBehaviour/Default.asset.meta
+Assets/PhysicMaterial/Player.physicMaterial
+Assets/PhysicMaterial/Player.physicMaterial.meta
+Assets/Shader/BlobShadow_0.shader
+Assets/Shader/BlobShadow_0.shader.meta
+Assets/Shader/cube_rounded_big_b (20).prefab
+Assets/Shader/cube_rounded_big_b (20).prefab.meta
+Assets/Shader/FresnelSurfaceSolid.shader
+Assets/Shader/FresnelSurfaceSolid.shader.meta
+Assets/Shader/FresnelSurfaceSolidTextured.shader
+Assets/Shader/FresnelSurfaceSolidTextured.shader.meta
+Assets/Shader/Kadka_CheckerboardSurfaceBackground.shader
+Assets/Shader/Kadka_CheckerboardSurfaceBackground.shader.meta
+Assets/Shader/SurfaceSolidTexturedFogPower.shader
+Assets/Shader/SurfaceSolidTexturedFogPower.shader.meta
+Assets/Shader/Water2D_UnlitWaterRippleBasic_FM.shader
+Assets/Shader/Water2D_UnlitWaterRippleBasic_FM.shader.meta
+Assets/Shader/Water2D_UnlitWaterRippleBasic_TM.shader
+Assets/Shader/Water2D_UnlitWaterRippleBasic_TM.shader.meta
+Assets/Sprite/cat_1_icon.asset
+Assets/Sprite/cat_1_icon.asset.meta
+Assets/Sprite/finish_icon.asset
+Assets/Sprite/finish_icon.asset.meta
+Assets/GameObject/AnimationRagdoll.prefab
+Assets/GameObject/AnimationRagdoll.prefab.meta
+Assets/GameObject/water_slashes.prefab
+Assets/GameObject/water_slashes.prefab.meta
